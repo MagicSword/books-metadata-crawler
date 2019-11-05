@@ -30,6 +30,7 @@ from BaseClass import Book
 import requests
 from bs4 import BeautifulSoup
 import re
+import click
 
 # --------------------------------------------------------- common routines
 # https://www.books.com.tw/products/0010836923
@@ -77,94 +78,19 @@ class NewBook(Book):
             description = description + new_li
         self.description = description
 
-    def  refineData(self):
-        pass
-
-"""
-def cli():
-    "Command-line interface (looks at sys.argv to decide what to do)."
-    import getopt
-    class BadUsage: pass
-
-    # Scripts don't get the current directory in their path by default
-    # unless they are run with the '-m' switch
-    if '' not in sys.path:
-        scriptdir = os.path.dirname(sys.argv[0])
-        if scriptdir in sys.path:
-            sys.path.remove(scriptdir)
-        sys.path.insert(0, '.')
-
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], 'gk:p:w')
-        writing = 0
-
-        for opt, val in opts:
-            if opt == '-g':
-                gui()
-                return
-            if opt == '-k':
-                apropos(val)
-                return
-            if opt == '-p':
-                try:
-                    port = int(val)
-                except ValueError:
-                    raise BadUsage
-                def ready(server):
-                    print 'pydoc server ready at %s' % server.url
-                def stopped():
-                    print 'pydoc server stopped'
-                serve(port, ready, stopped)
-                return
-            if opt == '-w':
-                writing = 1
-
-        if not args: raise BadUsage
-        for arg in args:
-            if ispath(arg) and not os.path.exists(arg):
-                print 'file %r does not exist' % arg
-                break
-            try:
-                if ispath(arg) and os.path.isfile(arg):
-                    arg = importfile(arg)
-                if writing:
-                    if ispath(arg) and os.path.isdir(arg):
-                        writedocs(arg)
-                    else:
-                        writedoc(arg)
-                else:
-                    help.help(arg)
-            except ErrorDuringImport, value:
-                print value
-
-    except (getopt.error, BadUsage):
-        cmd = os.path.basename(sys.argv[0])
-        print "pydoc - the Python documentation tool
-%s <name> ...
-    Show text documentation on something.  <name> may be the name of a
-    Python keyword, topic, function, module, or package, or a dotted
-    reference to a class or function within a module or module in a
-    package.  If <name> contains a '%s', it is used as the path to a
-    Python source file to document. If name is 'keywords', 'topics',
-    or 'modules', a listing of these things is displayed.
-%s -k <keyword>
-    Search for a keyword in the synopsis lines of all available modules.
-%s -p <port>
-    Start an HTTP server on the given port on the local machine.  Port
-    number 0 can be used to get an arbitrary unused port.
-%s -g
-    Pop up a graphical interface for finding and serving documentation.
-%s -w <name> ...
-    Write out the HTML documentation for a module to a file in the current
-    directory.  If <name> contains a '%s', it is treated as a filename; if
-    it names a directory, documentation is written for all the contents.
-" % (cmd, os.sep, cmd, cmd, cmd, cmd, os.sep)
-"""
 
 
-if __name__ == '__main__':
-    bo = NewBook('0010836923')
+@click.command()
+@click.option('-b', '--bookid', help='Books book id', default='0010804030')
+def publishMD(bookid):
+    "Output book data as Markdown format"
+    bo = NewBook(bookid)
     print("![" + bo.title + "](" + bo.imageurl + ' =50%x50%)')
     print("* [圖書資料](" + bo.url + ")")
     print(bo.description)
+
+
+
+if __name__ == '__main__':
+    publishMD()
 
